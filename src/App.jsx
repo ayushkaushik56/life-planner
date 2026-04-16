@@ -74,8 +74,8 @@ body,html{background:${t.bg};color:${t.text};font-family:'Inter',-apple-system,B
 
 /* ---- FAB Row ---- */
 .fab-container{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:200;height:48px;}
-.fab-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 18px;height:100%;box-sizing:border-box;background:${t.glassStrong};border:1px solid ${t.border};border-radius:24px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:${t.shadow};transition:all .2s;}
-.fab{display:flex;align-items:center;justify-content:center;height:48px;border:1px solid transparent;background:transparent;color:${t.textSub};border-radius:24px;padding:0 16px;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s ease;letter-spacing:.02em;box-sizing:border-box;}
+.fab-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 14px;height:100%;box-sizing:border-box;background:${t.glassStrong};border:1px solid ${t.border};border-radius:24px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:${t.shadow};transition:all .2s;}
+.fab{display:flex;align-items:center;justify-content:center;height:40px;border:1px solid transparent;background:transparent;color:${t.textSub};border-radius:20px;padding:0 16px;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s ease;letter-spacing:.02em;box-sizing:border-box;}
 .fab:hover{background:${t.pill};border-color:${t.borderHover};}
 .fab-today{background:${t.accent};color:${t.bg};border-color:${t.accent};}
 .fab-today:hover{background:${t.text};border-color:${t.text};color:${t.bg};transform:translateY(-1px);}
@@ -525,8 +525,8 @@ function JournalChat({dayKey, dd, setDD, dayOneUrl, t, geminiKey, setGeminiKey})
     setLoading(true); setSummary("");
     try {
       const transcript = msgs.map(m => `${m.role === "user" ? "Me" : "Friend"}: ${m.text}`).join("\n");
-      const contents = [{role:"user", parts:[{text: `Below is a full conversation I had with a friend about my day. Read the ENTIRE conversation (both my messages and the friend's questions) to understand the full context and flow of what happened. Then create a concise journal summary that captures the complete picture of my day based on everything discussed. Write it as a coherent narrative, not just bullet points of my messages. IMPORTANT: Write in the SAME language I used — if Hinglish, write in Hinglish. Keep it short and natural. Write in first person.\n\n---\n${transcript}`}]}];
-      const result = await callGemini(contents, "You are a journal summarizer. Read the full conversation including both sides to understand the context. Then write a concise, coherent journal entry that captures the whole story — what happened, how the person felt, what they discussed. Use the SAME language the user used (Hinglish if they used Hinglish). Do NOT just list the user's messages one after another. Instead, weave them into a natural flowing summary that reads like a proper journal entry. Keep it brief but complete. Write in first person.");
+      const contents = [{role:"user", parts:[{text: `Below is a full conversation I had with a friend about my day. Read the ENTIRE conversation. Create a concise journal summary capturing ONLY the facts and feelings I explicitly narrated. DO NOT add fictional stories, fabricate events, or inject your own details. Stick STRICTLY to what was discussed. Write it as a coherent narrative in first-person. Write in the EXACT SAME language I used.\n\n---\n${transcript}`}]}];
+      const result = await callGemini(contents, "You are a journal summarizer. Extract ONLY information provided in the conversation. NEVER make up stories or fabricate details. Write a concise, coherent first-person narrative summary. Speak in the exact same language the user used (e.g., Hinglish).");
       setSummary(result);
     } catch(e) {
       console.error(e);
@@ -561,6 +561,7 @@ function JournalChat({dayKey, dd, setDD, dayOneUrl, t, geminiKey, setGeminiKey})
           <span className="sec-label" style={{margin:0}}>Journal</span>
           <div style={{display:"flex", gap:8, alignItems:"center"}}>
             <span style={{fontSize:11, color:t.textMuted}}>{msgs.filter(m=>m.role==="user").length} messages</span>
+            <button className="btn-ghost" onClick={()=>{if(window.confirm("Clear this chat?")) setMsgs([{role:"model", text:"Hey! 👋 How's your day going? Tell me anything — I'm here like a friend."}])}} style={{fontSize:10, padding:"2px 6px"}}>Clear</button>
             <button className="btn-ghost" onClick={()=>setGeminiKey("")} style={{fontSize:10, padding:"2px 6px"}}>Disconnect</button>
           </div>
         </div>
@@ -593,12 +594,25 @@ function JournalChat({dayKey, dd, setDD, dayOneUrl, t, geminiKey, setGeminiKey})
       {summary && (
         <div className="card fade-up" style={{marginBottom:16}}>
           <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12}}>
-            <span className="sec-label" style={{margin:0}}>Journal Summary</span>
-            <button className="btn" onClick={copyToClipboard} style={{padding:"5px 12px", fontSize:11}}>
-              {copied ? "✓ Copied!" : "Copy"}
-            </button>
+            <span className="sec-label" style={{margin:0}}>Generated Summary</span>
+            <div style={{display:"flex", gap:6}}>
+              <button className="btn-primary" onClick={()=>{setDD({...dd, keptJournal:summary});setSummary("");}} style={{padding:"5px 12px", fontSize:11}}>Keep</button>
+              <button className="btn" onClick={copyToClipboard} style={{padding:"5px 12px", fontSize:11}}>
+                {copied ? "✓ Copied" : "Copy"}
+              </button>
+            </div>
           </div>
           <div style={{fontSize:13, lineHeight:1.8, color:t.text, whiteSpace:"pre-wrap"}}>{summary}</div>
+        </div>
+      )}
+
+      {dd.keptJournal && !summary && (
+        <div className="card fade-in" style={{marginBottom:16}}>
+          <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12}}>
+            <span className="sec-label" style={{margin:0}}>My Journal Entry</span>
+            <button className="btn-ghost" onClick={()=>{if(window.confirm("Delete kept journal?")) setDD({...dd, keptJournal:""})}} style={{padding:"5px 8px", fontSize:11}}>Remove</button>
+          </div>
+          <div style={{fontSize:13, lineHeight:1.8, color:t.text, whiteSpace:"pre-wrap"}}>{dd.keptJournal}</div>
         </div>
       )}
 
