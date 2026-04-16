@@ -75,7 +75,7 @@ body,html{background:${t.bg};color:${t.text};font-family:'Inter',-apple-system,B
 /* ---- FAB Row ---- */
 .fab-container{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:200;height:48px;}
 .fab-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 18px;height:100%;box-sizing:border-box;background:${t.glassStrong};border:1px solid ${t.border};border-radius:24px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:${t.shadow};transition:all .2s;}
-.fab{display:flex;align-items:center;justify-content:center;height:36px;border:1px solid transparent;background:transparent;color:${t.textSub};border-radius:18px;padding:0 16px;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s ease;letter-spacing:.02em;box-sizing:border-box;}
+.fab{display:flex;align-items:center;justify-content:center;height:48px;border:1px solid transparent;background:transparent;color:${t.textSub};border-radius:24px;padding:0 16px;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s ease;letter-spacing:.02em;box-sizing:border-box;}
 .fab:hover{background:${t.pill};border-color:${t.borderHover};}
 .fab-today{background:${t.accent};color:${t.bg};border-color:${t.accent};}
 .fab-today:hover{background:${t.text};border-color:${t.text};color:${t.bg};transform:translateY(-1px);}
@@ -334,7 +334,9 @@ function TodoList({items,onChange,title,showMove,year,month,t}){
           <span className="sec-label" style={{margin:0}}>{title}</span>
           {items.length>0&&<span style={{fontSize:10,color:t.textMuted,background:t.pill,padding:"2px 8px",borderRadius:20}}>{done}/{items.length}</span>}
         </div>
-        <button className="btn" onClick={()=>setAdding(a=>!a)}>{adding?"Done":"+ Add"}</button>
+        <button onClick={()=>setAdding(a=>!a)} style={{width:28,height:28,borderRadius:"50%",border:`1px solid ${t.border}`,background:adding?t.pill:t.surface,color:adding?t.text:t.textSub,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:18,fontWeight:"300",paddingBottom:2,transition:"all .2s",boxShadow:t.shadow}}>
+          {adding ? "×" : "+"}
+        </button>
       </div>
       {adding&&(
         <div className="fade-up" style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:12,marginBottom:10}}>
