@@ -755,9 +755,9 @@ function YearPage({year,data,setData,onNav,t}){
                 {isCM&&<span style={{width:5,height:5,borderRadius:"50%",background:t.accent,display:"inline-block",boxShadow:`0 0 6px ${t.accent}`}}/>}
               </div>
               {goals.slice(0,3).map((g,i)=>(
-                <div key={i} style={{display:"flex",alignItems:"center",gap:5,marginBottom:3}}>
+                <div key={i} style={{display:"flex",alignItems:"center",gap:5,marginBottom:3,width:"100%",overflow:"hidden"}}>
                   <span style={{width:4,height:4,borderRadius:"50%",background:g.done?t.accent:t.textMuted,flexShrink:0,transition:"background .2s"}}/>
-                  <span style={{fontSize:11,color:g.done?t.textMuted:t.textSub,textDecoration:g.done?"line-through":"none",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{g.text||"…"}</span>
+                  <span style={{flex:1,minWidth:0,fontSize:11,color:g.done?t.textMuted:t.textSub,textDecoration:g.done?"line-through":"none",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{g.text||"…"}</span>
                 </div>
               ))}
               {goals.length>3&&<div style={{fontSize:10,color:t.textMuted,marginTop:2}}>+{goals.length-3} more</div>}
