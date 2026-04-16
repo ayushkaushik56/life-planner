@@ -469,9 +469,13 @@ function JournalChat({dayKey, dd, setDD, dayOneUrl, t, geminiKey, setGeminiKey})
   const [summary, setSummary] = useState("");
   const [copied, setCopied] = useState(false);
   const [keyInp, setKeyInp] = useState("");
-  const chatEnd = useRef();
+  const chatScroll = useRef();
 
-  useEffect(() => { if(chatEnd.current) chatEnd.current.scrollIntoView({behavior:"smooth"}); }, [msgs, loading]);
+  useEffect(() => {
+    if(chatScroll.current) {
+      chatScroll.current.scrollTop = chatScroll.current.scrollHeight;
+    }
+  }, [msgs, loading]);
 
   // Persist messages to data
   useEffect(() => {
@@ -558,7 +562,7 @@ function JournalChat({dayKey, dd, setDD, dayOneUrl, t, geminiKey, setGeminiKey})
             <button className="btn-ghost" onClick={()=>setGeminiKey("")} style={{fontSize:10, padding:"2px 6px"}}>Disconnect</button>
           </div>
         </div>
-        <div style={{padding:"10px 16px 14px", maxHeight:380, overflowY:"auto", display:"flex", flexDirection:"column", gap:10}}>
+        <div ref={chatScroll} style={{padding:"10px 16px 14px", maxHeight:380, overflowY:"auto", display:"flex", flexDirection:"column", gap:10}}>
           {msgs.map((m, i) => (
             <div key={i} style={{display:"flex", justifyContent:m.role==="user"?"flex-end":"flex-start"}}>
               <div style={{
@@ -571,7 +575,6 @@ function JournalChat({dayKey, dd, setDD, dayOneUrl, t, geminiKey, setGeminiKey})
             </div>
           ))}
           {loading && <div style={{display:"flex",justifyContent:"flex-start"}}><div style={{background:t.surface,padding:"10px 16px",borderRadius:16,borderBottomLeftRadius:4,fontSize:13,color:t.textMuted,border:`1px solid ${t.border}`}}>···</div></div>}
-          <div ref={chatEnd}/>
         </div>
         <div style={{display:"flex", gap:8, padding:"10px 14px", borderTop:`1px solid ${t.border}`, background:t.card}}>
           <input className="inp" value={inp} onChange={e=>setInp(e.target.value)} placeholder="Talk to me…" onKeyDown={e=>{if(e.key==="Enter")send();}} style={{border:"none", background:"transparent"}} />
@@ -1071,7 +1074,10 @@ export default function App(){
     if(changed) setData(newData);
   }, [data, setData]);
   const t=dark?T.dark:T.light;
-  const nav=(page,params={})=>setView({page,...params});
+  const nav=(page,params={})=>{
+    setView({page,...params});
+    window.scrollTo({top:0, left:0, behavior:"instant"});
+  };
   const goToday=()=>{const d=td();nav("day",{year:d.y,month:d.m,day:d.d});};
   const goThisMonth=()=>{const d=td();nav("month",{year:d.y,month:d.m});};
 
