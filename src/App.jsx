@@ -75,7 +75,7 @@ body,html{background:${t.bg};color:${t.text};font-family:'Inter',-apple-system,B
 /* ---- FAB Row ---- */
 .fab-container{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:200;height:48px;}
 .fab-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 18px;height:100%;box-sizing:border-box;background:${t.glassStrong};border:1px solid ${t.border};border-radius:24px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:${t.shadow};transition:all .2s;}
-.fab{display:flex;align-items:center;justify-content:center;height:36px;border:1px solid transparent;background:transparent;color:${t.textSub};border-radius:18px;padding:0 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s ease;letter-spacing:.01em;box-sizing:border-box;}
+.fab{display:flex;align-items:center;justify-content:center;height:36px;border:1px solid transparent;background:transparent;color:${t.textSub};border-radius:18px;padding:0 16px;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s ease;letter-spacing:.02em;box-sizing:border-box;}
 .fab:hover{background:${t.pill};border-color:${t.borderHover};}
 .fab-today{background:${t.accent};color:${t.bg};border-color:${t.accent};}
 .fab-today:hover{background:${t.text};border-color:${t.text};color:${t.bg};transform:translateY(-1px);}
@@ -144,7 +144,7 @@ select option{background:${t.surface};}
   .crumb{font-size:12px;padding:4px 6px;}
   .fab-container{bottom:28px;transform:translateX(-50%);height:48px;}
   .fab-row{padding:0 14px;}
-  .fab{padding:0 14px;font-size:13px;}
+  .fab{padding:0 14px;font-size:14px;}
   .fab-today{animation:none;}
   .page{padding:20px 12px 100px;}
   .card{padding:14px;border-radius:12px;}
