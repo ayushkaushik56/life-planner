@@ -903,7 +903,7 @@ function TodoistWidget({token, setToken, t}) {
     }
 
     try {
-      const res = await fetch("https://api.todoist.com/rest/v2/tasks?filter=today", {
+      const res = await fetch("https://api.todoist.com/api/v1/tasks?filter=today", {
         headers: { Authorization: `Bearer ${token}` }
       });
       if(res.ok) {
@@ -929,7 +929,7 @@ function TodoistWidget({token, setToken, t}) {
   const closeTask = async (id) => {
     setTasks(ts => ts.map(x => x.id === id ? {...x, checking: true} : x));
     try {
-      const res = await fetch(`https://api.todoist.com/rest/v2/tasks/${id}/close`, {
+      const res = await fetch(`https://api.todoist.com/api/v1/tasks/${id}/close`, {
         method: "POST", headers: { Authorization: `Bearer ${token}` }
       });
       if(res.ok) setTasks(ts => ts.filter(x => x.id !== id));
