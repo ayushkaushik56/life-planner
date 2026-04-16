@@ -126,7 +126,7 @@ body,html{background:${t.bg};color:${t.text};font-family:'Inter',-apple-system,B
 .shimmer-bar::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.08) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;}
 
 /* ---- Interactive cards (year/month grid, calendar) ---- */
-.grid-card{transition:all .2s ease;cursor:pointer;}
+.grid-card{transition:all .2s ease;cursor:pointer;min-width:0;overflow:hidden;}
 .grid-card:hover{transform:translateY(-2px);border-color:${t.borderHover};}
 .cal-cell{transition:all .15s ease;cursor:pointer;}
 .cal-cell:hover{transform:translateY(-1px);border-color:${t.borderHover};z-index:2;background:${t.pill};}
@@ -1149,9 +1149,15 @@ export default function App(){
         </div>
         <div className="fab-container">
           <div className="fab-row">
-            <button className="fab fab-theme" onClick={()=>setDark(d=>!d)}>{dark?"☀️":"🌙"}</button>
-            <button className="fab fab-month" onClick={goThisMonth}>This Month</button>
-            <button className="fab fab-today" onClick={goToday}>Today</button>
+            <button className="fab fab-theme" onClick={()=>setDark(d=>!d)} style={{paddingLeft:14, paddingRight:14}}>
+              {dark ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+              )}
+            </button>
+            <button className="fab fab-month" onClick={goThisMonth}>{MS[td().m].slice(0,3)}</button>
+            <button className="fab fab-today" onClick={goToday}>{td().d}</button>
           </div>
           <a className="fab-todoist" href="todoist://" title="Open Todoist">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
