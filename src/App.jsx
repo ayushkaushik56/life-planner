@@ -903,11 +903,30 @@ function TodoistWidget({token, setToken, t}) {
     }
 
     try {
-      const res = await fetch("https://api.todoist.com/api/v1/tasks?filter=today", {
+      const res = await fetch("https://api.todoist.com/rest/v2/tasks", {
         headers: { Authorization: `Bearer ${token}` }
       });
       if(res.ok) {
-         setTasks(await res.json());
+         let data;
+         try { data = await res.json(); } catch(e) { data = []; }
+         let safeTasks = [];
+         if (Array.isArray(data)) safeTasks = data;
+         else if (data && typeof data === 'object') {
+           if (Array.isArray(data.items)) safeTasks = data.items;
+           else if (Array.isArray(data.tasks)) safeTasks = data.tasks;
+           // single fallback or log
+           else console.warn("Todoist returned unknown structure:", data);
+         }
+         
+         // apply our 'today' filter locally in case the URL query string was dropped or unsupported by dynamic endpoints
+         const todayStr = new Date().toISOString().split("T")[0];
+         safeTasks = safeTasks.filter(t => {
+           if (!t.due) return false;
+           // Todoist `due.date` format is YYYY-MM-DD
+           return t.due.date === todayStr;
+         });
+         
+         setTasks(safeTasks);
       } else {
          const txt = await res.text();
          if(res.status === 401 || res.status === 403) {
@@ -929,10 +948,10 @@ function TodoistWidget({token, setToken, t}) {
   const closeTask = async (id) => {
     setTasks(ts => ts.map(x => x.id === id ? {...x, checking: true} : x));
     try {
-      const res = await fetch(`https://api.todoist.com/api/v1/tasks/${id}/close`, {
+      const res = await fetch(`https://api.todoist.com/rest/v2/tasks/${id}/close`, {
         method: "POST", headers: { Authorization: `Bearer ${token}` }
       });
-      if(res.ok) setTasks(ts => ts.filter(x => x.id !== id));
+      if(res.ok || res.status===204) setTasks(ts => ts.filter(x => x.id !== id));
       else setTasks(ts => ts.map(x => x.id === id ? {...x, checking: false} : x));
     }catch(err){ setTasks(ts => ts.map(x => x.id === id ? {...x, checking: false} : x)); }
   };
